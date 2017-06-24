@@ -5,25 +5,23 @@ var fs = require('fs');
 var util = require('util');
 var cuid = require('cuid');
 var simpleGit = require('simple-git');
-
 var debug = require('debug')('GitWorker');
-var diffFiles;
 
 var modConfig = {
   baseDir : "C:\\SourceCode\\WeylandTesting\\"
 }
 
-GitWorker.prototype.retrieveCode = function (repo, branch) {
+GitWorker.prototype.retrieveCode = function (repo, branch, callback) {
   var createdDirectory = this.createUniqueDirectory();
 
   this.checkoutBranchOfCode(repo, branch, createdDirectory.path);
 
-  this.getDiffBranchFiles(createdDirectory.path, function (diffOutput) {
-    diffFiles = diffOutput;
-    debug("Files diff'ed : %s", diffFiles);
-  });
+  // this.getDiffBranchFiles(createdDirectory.path, function (diffOutput) {
+  //   diffFiles = diffOutput;
+  //   debug("Files diff'ed : %s", diffFiles);
+  // });
 
-
+  callback(createdDirectory.path);
 };
 
 GitWorker.prototype.createUniqueDirectory = function () {
@@ -44,9 +42,11 @@ GitWorker.prototype.createUniqueDirectory = function () {
 GitWorker.prototype.getDiffBranchFiles = function (localPath, callback) {
   debug("Getting branch diff files...");
   var output = simpleGit.diff(['--name-only','master'], function (err, data) {
-    if (err) throw new Error(err);
+    if (err) error(err);
 
     var diffOutput = data.trim().split('\n');
+
+    debug("Returning: %s", diffOutput)
     return callback(diffOutput);
   });
 };

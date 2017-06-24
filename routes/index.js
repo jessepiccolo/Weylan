@@ -1,7 +1,9 @@
 var express = require('express');
+var debug = require('debug')('index.js');
 var router = express.Router();
 const githubHook = require('..\\modules\\GithubHook');
 const gitWorker = require('..\\modules\\GitWorker');
+const diffFileFilterer = require("..\\modules\\DiffFileFilterer");
 
 githubHook.listen();
 
@@ -16,7 +18,23 @@ router.get('/postData', function(req, res) {
   var ret = githubHook.testPullRequest("testForNodeForm", openedPullRequest);
 
   console.log("Testing Retrieving sourcecode...");
-  gitWorker.retrieveCode(ret.repoUrl, ret.branch);
+  gitWorker.retrieveCode(ret.repoUrl, ret.branch, function (output) {
+    var localPath = output;
+
+    console.log("Retrieving branch diff...");
+    gitWorker.getDiffBranchFiles(localPath, function (diffOutput) {
+      var diffFiles = diffOutput;
+      debug("diffFiles: %s", diffOutput);
+
+      diffFileFilterer.determineWorkingFolder(localPath, diffFiles);
+    });
+
+  });
+
+
+
+
+
 
   res.render('index', { title: 'Express' });
 });
