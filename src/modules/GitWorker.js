@@ -8,8 +8,8 @@ var simpleGit = require('simple-git');
 var debug = require('debug')('GitWorker');
 
 var modConfig = {
-  baseDir : "C:\\SourceCode\\WeylandTesting\\"
-}
+  baseDir: 'C:\\SourceCode\\WeylandTesting\\',
+};
 
 GitWorker.prototype.retrieveCode = function (repo, branch, callback) {
   var createdDirectory = this.createUniqueDirectory();
@@ -29,13 +29,13 @@ GitWorker.prototype.createUniqueDirectory = function () {
   var uniqueDirectory = modConfig.baseDir + uniqueKey;
   debug("Making directory -> %s", uniqueDirectory);
 
-  if (!fs.existsSync(uniqueDirectory)){
+  if (!fs.existsSync(uniqueDirectory)) {
       fs.mkdirSync(uniqueDirectory);
   } else {
     error("Making directory -> %s, FAILED!, Directory Exits!", uniqueDirectory);
   }
   return {
-    "path" : uniqueDirectory
+    path: uniqueDirectory,
   };
 };
 
@@ -46,7 +46,7 @@ GitWorker.prototype.getDiffBranchFiles = function (localPath, callback) {
 
     var diffOutput = data.trim().split('\n');
 
-    debug("Returning: %s", diffOutput)
+    debug("Returning: %s", diffOutput);
     return callback(diffOutput);
   });
 };

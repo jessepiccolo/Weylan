@@ -4,8 +4,11 @@ var router = express.Router();
 const githubHook = require('..\\modules\\GithubHook');
 const gitWorker = require('..\\modules\\GitWorker');
 const diffFileFilterer = require("..\\modules\\DiffFileFilterer");
+const terraformProcessor = require("..\\modules\\TerraformProcessor");
 
 githubHook.listen();
+
+var inWorkProj = {};
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -26,15 +29,13 @@ router.get('/postData', function(req, res) {
       var diffFiles = diffOutput;
       debug("diffFiles: %s", diffOutput);
 
-      diffFileFilterer.determineWorkingFolder(localPath, diffFiles);
+      diffFileFilterer.determineWorkingFolder(localPath, diffFiles, function (workingFolder) {
+        terraformProcessor.runTerraformPlan(workingFolder);
+
+      });
     });
 
   });
-
-
-
-
-
 
   res.render('index', { title: 'Express' });
 });

@@ -2,7 +2,7 @@ Punch hole in NAT:
   ngrok http 8082
 
 Start app:
-  Nav to C:\Frontline\Weyland
+  Nav to C:\git_repos\Weyland\src
   nodemon
 
 Navigate to : http://localhost:3000
